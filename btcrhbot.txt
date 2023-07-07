@@ -1,0 +1,30 @@
+import robin_stocks.robinhood as rh
+from secrets_1 import username, password
+from decimal import Decimal
+from time import sleep
+
+def login():
+    rh.login(username, password, expiresIn=86400, by_sms=True)
+
+def logout():
+    rh.logout()
+
+def buy_BTC_and_set_limit_sell():
+    symbol = 'BTC'
+    amountInDollars = 10
+    rh.order_buy_crypto_by_price(symbol, amountInDollars, timeInForce='gtc')
+    bought_price = round(Decimal(rh.orders.get_all_open_crypto_orders(info=None)[0]['price']),0)
+    print(bought_price)
+    limitPrice = bought_price + 25
+    quantity = rh.orders.get_all_open_crypto_orders(info=None)[0]['quantity']
+    print('bought BTC!')
+    sleep(5)
+    rh.order_sell_crypto_limit(symbol, quantity, float(limitPrice), timeInForce='gtc')
+    print(limitPrice)
+    print('set limit order for BTC!')
+    
+    
+
+login()
+buy_BTC_and_set_limit_sell()
+logout()
